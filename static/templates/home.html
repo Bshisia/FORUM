@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="posts">
+        <h1>Forum Posts</h1>
+        
+        <div class="filters">
+            <h3>Filter by:</h3>
+            <select onchange="window.location.href=this.value">
+                <option value="/">All Posts</option>
+                {{range .Categories}}
+                <option value="/category/{{.ID}}" {{if eq $.CurrentCategory.ID .ID}}selected{{end}}>
+                    {{.Name}}
+                </option>
+                {{end}}
+            </select>
+            
+            {{if .User}}
+            <a href="/posts/created" class="filter-btn">My Posts</a>
+            <a href="/posts/liked" class="filter-btn">Liked Posts</a>
+            {{end}}
+        </div>
+    
+        {{range .Posts}}
+        <div class="post-card">
+            <h2><a href="/post/{{.ID}}">{{.Title}}</a></h2>
+            <p class="post-meta">
+                Posted by {{.Username}} on {{.CreatedAt.Format "Jan 02, 2006"}}
+            </p>
+            <div class="categories">
+                {{range .Categories}}
+                <span class="category-tag">{{.Name}}</span>
+                {{end}}
+            </div>
+            <div class="post-stats">
+                <span>{{.Likes}} likes</span>
+                <span>{{.Dislikes}} dislikes</span>
+                <span>{{.CommentCount}} comments</span>
+            </div>
+        </div>
+        {{else}}
+        <p>No posts found.</p>
+        {{end}}
+    </div>
+</body>
+</html>
