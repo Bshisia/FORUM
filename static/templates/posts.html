@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Post.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="post-container">
+        <h1>{{.Post.Title}}</h1>
+        <div class="post-meta">
+            Posted by {{.Post.Username}} on {{.Post.CreatedAt.Format "Jan 02, 2006"}}
+        </div>
+        <div class="categories">
+            {{range .Post.Categories}}
+            <span class="category-tag">{{.Name}}</span>
+            {{end}}
+        </div>
+        <div class="post-content">
+            {{.Post.Content}}
+        </div>
+        <div class="vote-buttons">
+            <form method="POST" action="/post/vote">
+                <input type="hidden" name="post_id" value="{{.Post.ID}}">
+                <button type="submit" name="vote" value="1">👍 {{.Post.Likes}}</button>
+                <button type="submit" name="vote" value="-1">👎 {{.Post.Dislikes}}</button>
+            </form>
+        </div>
+        
+        <div class="comments-section">
+            <h2>Comments</h2>
+            {{if .User}}
+            <form method="POST" action="/post/{{.Post.ID}}/comment">
+                <textarea name="content" required></textarea>
+                <button type="submit">Add Comment</button>
+            </form>
+            {{end}}
+            
+            {{range .Comments}}
+            <div class="comment">
+                <div class="comment-meta">
+                    {{.Username}} on {{.CommentTime.Format "Jan 02, 2006"}}
+                </div>
+                <div class="comment-content">
+                    {{.Content}}
+                </div>
+                <div class="vote-buttons">
+                    <form method="POST" action="/comment/vote">
+                        <input type="hidden" name="comment_id" value="{{.ID}}">
+                        <button type="submit" name="vote" value="1">👍 {{.Likes}}</button>
+                        <button type="submit" name="vote" value="-1">👎 {{.Dislikes}}</button>
+                    </form>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>

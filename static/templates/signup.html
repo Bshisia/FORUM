@@ -9,11 +9,13 @@
 <body>
     <div class="container">
         <h1>Sign Up</h1>
-        <form action="submit">
+        <form action="/signup" method="POST">
             <label for="name">Name</label>
             <input type="text" name="name" id="name"><br>
             <label for="username">Username</label>
             <input type="text" name="username" id="username"><br>
+            <label for="text">Email</label>
+            <input type="text" name="email" id="email"><br>
             <label for="password">Password</label>
             <input type="text" name="password" id="password"><br>
             <label for="text">Confirm Password</label>
@@ -21,7 +23,7 @@
             <button type="submit">Sign Up</button>
         </form>
         <div>
-            <a href="/static/templates/signin.html">already have an account</a>
+            <a href="/signin">already have an account</a>
         </div>
     </div>
 </body>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{.User.Username}}</h1>
+        <a href="/createpost">Create a Post</a>
+        <h2>Posts</h2>
+        {{range .Posts}}
+        <div>
+            <h3>{{.Title}}</h3>
+            <p>{{.Content}}</p>
+            <p><small>By {{.Author}}</small></p>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

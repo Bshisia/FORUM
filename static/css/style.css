@@ -1,3 +1,17 @@
+/* Define primary colors using CSS variables */
+:root {
+    --primary-bg: black;       /* Rich dark blue for the background */
+    --container-bg: #2c3e50;      /* Dark teal-blue for container */
+    --accent-teal: #16a085;       /* Teal accent for buttons */
+    --hover-teal: #1abc9c;        /* Lighter teal for button hover */
+    --text-light: #ecf0f1;        /* Light text color (white/grayish) */
+    --text-dark: #34495e;         /* Dark text for readability */
+    --input-border: #bdc3c7;      /* Soft light gray for input borders */
+}
+
+/* Apply variables throughout the styles */
+
+/* General reset */
 * {
     margin: 0;
     padding: 0;
@@ -7,7 +21,7 @@
 /* Body styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    background-color: var(--primary-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,10 +30,10 @@ body {
 
 /* Container styling */
 .container {
-    background-color: #fff;
+    background-color: var(--container-bg);
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 400px;
 }
@@ -27,7 +41,7 @@ body {
 /* Header styling */
 h1 {
     text-align: center;
-    color: #333;
+    color: var(--text-light);
     margin-bottom: 20px;
 }
 
@@ -36,32 +50,34 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-light);
 }
 
 input[type="text"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 16px;
+    color: var(--text-dark);
+    background-color: #ecf0f1;
 }
 
 button[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: #5cb85c;
+    background-color: var(--accent-teal);
     border: none;
     border-radius: 4px;
-    color: #fff;
+    color: var(--text-light);
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 button[type="submit"]:hover {
-    background-color: #4cae4c;
+    background-color: var(--hover-teal);
 }
 
 /* Link styling */
@@ -69,7 +85,7 @@ a {
     display: block;
     text-align: center;
     margin-top: 15px;
-    color: #007bff;
+    color: var(--text-light);
     text-decoration: none;
 }
 
@@ -90,138 +106,5 @@ a:hover {
 
     button[type="submit"] {
         font-size: 14px;
-    }
-}
-
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-    color: #333;
-    line-height: 1.6;
-}
-
-h1, h2, h3 {
-    margin: 0 0 10px;
-}
-
-a {
-    color: #0077cc;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Posts Section */
-.posts {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-.posts h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-/* Filters Section */
-.filters {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.filters h3 {
-    margin-right: 10px;
-}
-
-.filters select {
-    padding: 8px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-}
-
-.filter-btn {
-    padding: 8px 12px;
-    margin-left: 10px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #0077cc;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.filter-btn:hover {
-    background-color: #005fa3;
-}
-
-/* Post Card */
-.post-card {
-    padding: 15px;
-    margin-bottom: 20px;
-    background: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    transition: box-shadow 0.3s ease;
-}
-
-.post-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.post-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-.post-card .post-meta {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 10px;
-}
-
-.categories {
-    margin: 10px 0;
-}
-
-.category-tag {
-    display: inline-block;
-    padding: 5px 10px;
-    margin-right: 5px;
-    font-size: 0.8rem;
-    color: #fff;
-    background-color: #0077cc;
-    border-radius: 4px;
-}
-
-.post-stats {
-    font-size: 0.9rem;
-    color: #666;
-    display: flex;
-    gap: 15px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .filters {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .filter-btn {
-        margin-top: 10px;
-        margin-left: 0;
     }
 }
