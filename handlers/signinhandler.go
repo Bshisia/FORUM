@@ -94,10 +94,11 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 			SameSite: http.SameSiteStrictMode,
 		})
 
-		// Redirect to home page
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// Redirect to timeline page
+		http.Redirect(w, r, "/timeline", http.StatusSeeOther)
 	}
 }
+
 
 // func SignOutHandler(w http.ResponseWriter, r *http.Request) {
 // 	// Clear the session from database if needed

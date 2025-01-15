@@ -6,9 +6,15 @@ type User struct {
 	ID       int
 	Name     string
 	Email    string
-	UserName string
+	UserName string    
 	PassWord string
 }
+
+type CategoryWithCount struct {
+	Category
+	PostCount int
+}
+
 
 type Post struct {
 	ID       int

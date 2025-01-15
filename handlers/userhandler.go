@@ -34,7 +34,7 @@ func UserPostsHandler(w http.ResponseWriter, r *http.Request) {
 		User:       user,
 	}
 
-	tmpl := template.Must(template.ParseFiles("static/templates/home.html"))
+	tmpl := template.Must(template.ParseFiles("static/templates/index.html"))
 	tmpl.Execute(w, data)
 }
 
@@ -65,6 +65,6 @@ func LikedPostsHandler(w http.ResponseWriter, r *http.Request) {
 		User:       user,
 	}
 
-	tmpl := template.Must(template.ParseFiles("static/templates/home.html"))
+	tmpl := template.Must(template.ParseFiles("static/templates/index.html"))
 	tmpl.Execute(w, data)
 }

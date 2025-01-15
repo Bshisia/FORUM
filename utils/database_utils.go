@@ -117,3 +117,58 @@ func GetLikedPosts(db *sql.DB, userID int) ([]PostWithMetadata, error) {
 
 	return ScanPosts(db, rows)
 }
+
+func GetCategoriesWithCount(db *sql.DB) ([]CategoryWithCount, error) {
+	rows, err := db.Query(`
+		SELECT 
+			c.id,
+			c.name,
+			COUNT(pc.post_id) as post_count
+		FROM categories c
+		LEFT JOIN post_categories pc ON c.id = pc.category_id
+		GROUP BY c.id, c.name
+		ORDER BY post_count DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []CategoryWithCount
+	for rows.Next() {
+		var cat CategoryWithCount
+		err := rows.Scan(&cat.ID, &cat.Name, &cat.PostCount)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, cat)
+	}
+	return categories, nil
+}
+
+// GetPostsByCategory retrieves all posts for a specific category
+func GetPostsByCategory(db *sql.DB, categoryID int) ([]PostWithMetadata, error) {
+	rows, err := db.Query(`
+		SELECT 
+			p.id,
+			p.user_id,
+			p.title,
+			p.content,
+			p.post_at,
+			p.likes,
+			p.dislikes,
+			u.username,
+			(SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		ORDER BY p.post_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return ScanPosts(db, rows)
+}
