@@ -5,26 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 2px;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input.error {
+            border-color: red;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .general-error {
+            background-color: #fff3f3;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .show-password-group {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .show-password-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .show-password-group label {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Sign Up</h1>
+        {{if .Errors.GeneralError}}
+        <div class="general-error">
+            {{.Errors.GeneralError}}
+        </div>
+        {{end}}
         <form action="/signup" method="POST">
-            <label for="name">Name</label>
-            <input type="text" name="name" id="name"><br>
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username"><br>
-            <label for="text">Email</label>
-            <input type="text" name="email" id="email"><br>
-            <label for="password">Password</label>
-            <input type="text" name="password" id="password"><br>
-            <label for="text">Confirm Password</label>
-            <input type="text" name="password" id="password"><br>
+            <div class="input-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="{{.Name}}" {{if .Errors.NameError}}class="error"{{end}}>
+                {{if .Errors.NameError}}
+                <div class="error-message">{{.Errors.NameError}}</div>
+                {{end}}
+            </div>
+
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" value="{{.Username}}" {{if .Errors.UsernameError}}class="error"{{end}}>
+                {{if .Errors.UsernameError}}
+                <div class="error-message">{{.Errors.UsernameError}}</div>
+                {{end}}
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="{{.Email}}" {{if .Errors.EmailError}}class="error"{{end}}>
+                {{if .Errors.EmailError}}
+                <div class="error-message">{{.Errors.EmailError}}</div>
+                {{end}}
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" {{if .Errors.PasswordError}}class="error"{{end}}>
+                {{if .Errors.PasswordError}}
+                <div class="error-message">{{.Errors.PasswordError}}</div>
+                {{end}}
+            </div>
+
+            <div class="input-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" {{if .Errors.PasswordError}}class="error"{{end}}>
+            </div>
+
+            <div class="show-password-group">
+                <input type="checkbox" id="show-password">
+                <label for="show-password">Show password</label>
+            </div>
+
             <button type="submit">Sign Up</button>
         </form>
-        <div>
-            <a href="/signin">already have an account</a>
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="/signin">Already have an account? Sign in</a>
         </div>
     </div>
+
+    <script>
+        document.getElementById('show-password').addEventListener('change', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            
+            // Toggle type between "password" and "text"
+            const type = this.checked ? 'text' : 'password';
+            passwordInput.type = type;
+            confirmPasswordInput.type = type;
+        });
+    </script>
 </body>
 </html>

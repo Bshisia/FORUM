@@ -8,17 +8,74 @@
 </head>
 <body>
     <div class="container">
-        <form action="submit">
+        <form method="POST" action="/signin">
             <h1>Sign In</h1>
-            <label for="username" id="username">Username</label>
-            <input type="text" name="username" id="username"><br>
-            <label for="password">Password</label>
-            <input type="text" name="password" id="password"><br>
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" required>
+                <div class="error-message" id="username-error">
+                    {{if .UsernameError}}
+                        {{.UsernameError}}
+                    {{end}}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <div class="error-message" id="password-error">
+                    {{if .PasswordError}}
+                        {{.PasswordError}}
+                    {{end}}
+                </div>
+            </div>
+
+            {{if .GeneralError}}
+            <div class="error-message general-error">
+                {{.GeneralError}}
+            </div>
+            {{end}}
+
             <button type="submit">Sign In</button>
         </form>
-        <div>
-            <a href="/signup">create an account</a>
+        <div class="signup-link">
+            <a href="/signup">Create an account</a>
         </div>
     </div>
+
+    <style>
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            min-height: 1.25rem;
+        }
+
+        .general-error {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .signup-link {
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
 </body>
 </html>
