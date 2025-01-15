@@ -3,21 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Forum - Your Community Space</title>
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --container-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --hover-accent: #7dd3fc;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-bg: #273548;
+            --shadow: 0 4px 15px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--container-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-light);
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 2rem;
+            background: var(--container-bg);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        .user-avatar:hover + .dropdown-menu,
+        .dropdown-menu:hover {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--card-bg);
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 5rem;
+            height: calc(100vh - 7rem);
+            margin-top: 3rem;
+        }
+
+        /* Rest of the existing styles remain the same */
+        .nav-menu {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        .nav-link.active {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .main-content {
+            margin-top: 5rem;
+        }
+
+        /* Rest of your existing styles... */
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome, {{.User.Username}}</h1>
-        <a href="/createpost">Create a Post</a>
-        <h2>Posts</h2>
-        {{range .Posts}}
-        <div>
-            <h3>{{.Title}}</h3>
-            <p>{{.Content}}</p>
-            <p><small>By {{.Author}}</small></p>
+    <nav class="navbar">
+        <div class="logo">
+            🌊 Forum
         </div>
-        {{end}}
+        <div class="user-profile">
+            <span>Welcome, {{.User.Username}}</span>
+            <div class="user-avatar">
+                👤
+            </div>
+            <div class="dropdown-menu">
+                <a href="/profile" class="dropdown-item">My Profile</a>
+                <a href="/settings" class="dropdown-item">Settings</a>
+                <a href="/logout" class="dropdown-item">Sign Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <nav class="nav-menu">
+                <a href="/" class="nav-link active">🏠 Home</a>
+                <a href="/posts/created" class="nav-link">📝 My Posts</a>
+                <a href="/posts/liked" class="nav-link">❤️ Liked Posts</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="filters">
+                <h3>Filter by:</h3>
+                <select onchange="window.location.href=this.value">
+                    <option value="/">All Posts</option>
+                    {{range .Categories}}
+                    <option value="/category/{{.ID}}" {{if eq $.CurrentCategory.ID .ID}}selected{{end}}>
+                        {{.Name}}
+                    </option>
+                    {{end}}
+                </select>
+            </div>
+
+            {{range .Posts}}
+            <div class="post-card">
+                <h2><a href="/post/{{.ID}}">{{.Title}}</a></h2>
+                <p class="post-meta">
+                    Posted by {{.Username}} on {{.CreatedAt.Format "Jan 02, 2006"}}
+                </p>
+                <div class="categories">
+                    {{range .Categories}}
+                    <span class="category-tag">{{.Name}}</span>
+                    {{end}}
+                </div>
+                <div class="post-stats">
+                    <span>❤️ {{.Likes}} likes</span>
+                    <span>👎 {{.Dislikes}} dislikes</span>
+                    <span>💬 {{.CommentCount}} comments</span>
+                </div>
+            </div>
+            {{end}}
+        </main>
+
+        <aside class="trending">
+            <h2>Popular Categories</h2>
+            {{range .Categories}}
+            <div class="trend-item">
+                <h4>{{.Name}}</h4>
+                <span>{{.PostCount}} posts</span>
+            </div>
+            {{end}}
+        </aside>
     </div>
 </body>
 </html>

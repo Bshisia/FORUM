@@ -9,7 +9,7 @@ import (
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		tmpl := template.Must(template.ParseFiles("static/templates/create-post.html"))
+		tmpl := template.Must(template.ParseFiles("static/templates/createpost.html"))
 		tmpl.Execute(w, nil)
 		return
 	}

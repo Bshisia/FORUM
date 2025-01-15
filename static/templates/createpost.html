@@ -4,34 +4,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Post</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --container-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --hover-accent: #7dd3fc;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-bg: #273548;
+            --shadow: 0 4px 15px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: calc(100vh - 4rem);
+        }
+
+        .nav-menu {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        .nav-link.active {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .main-content {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--card-bg);
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .category-checkbox {
+            background: var(--card-bg);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-checkbox:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .category-checkbox input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        button[type="submit"]:hover {
+            background: var(--hover-accent);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .layout {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Create New Post</h1>
-        <form method="POST" action="/post/create">
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" id="title" name="title" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="content">Content</label>
-                <textarea id="content" name="content" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Categories</label>
-                {{range .Categories}}
-                <div class="category-checkbox">
-                    <input type="checkbox" name="categories" value="{{.ID}}" id="cat-{{.ID}}">
-                    <label for="cat-{{.ID}}">{{.Name}}</label>
+    <div class="layout">
+        <aside class="sidebar">
+            <nav class="nav-menu">
+                <div class="logo">
+                    🌊 Forum
                 </div>
-                {{end}}
-            </div>
-            
-            <button type="submit">Create Post</button>
-        </form>
+                <a href="/" class="nav-link">🏠 Home</a>
+                <a href="/posts/created" class="nav-link">📝 My Posts</a>
+                <a href="/posts/liked" class="nav-link">❤️ Liked Posts</a>
+                <a href="/create" class="nav-link active">✏️ Create Post</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h1>Create New Post</h1>
+            <form method="POST" action="/post/create">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        required 
+                        placeholder="Enter your post title..."
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        required
+                        placeholder="What's on your mind?"
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Categories</label>
+                    <div class="categories-grid">
+                        {{range .Categories}}
+                        <div class="category-checkbox">
+                            <input type="checkbox" name="categories" value="{{.ID}}" id="cat-{{.ID}}">
+                            <label for="cat-{{.ID}}">{{.Name}}</label>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+                
+                <button type="submit">Create Post</button>
+            </form>
+        </main>
     </div>
 </body>
 </html>

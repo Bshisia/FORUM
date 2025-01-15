@@ -3,50 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Forum - Your Community Space</title>
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --container-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --hover-accent: #7dd3fc;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-bg: #273548;
+            --shadow: 0 4px 15px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: calc(100vh - 4rem);
+        }
+
+        .nav-menu {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        .nav-link.active {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .filters {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters select {
+            background: var(--card-bg);
+            color: var(--text-light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .post-card {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.5s ease forwards;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-card h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .post-card h2 a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .post-card h2 a:hover {
+            color: var(--accent-color);
+        }
+
+        .post-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .categories {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-tag {
+            background: var(--card-bg);
+            color: var(--text-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .trending {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: sticky;
+            top: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .trending h2 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1200px) {
+            .layout {
+                grid-template-columns: 250px 1fr;
+            }
+            .trending {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="posts">
-        <h1>Forum Posts</h1>
-        
-        <div class="filters">
-            <h3>Filter by:</h3>
-            <select onchange="window.location.href=this.value">
-                <option value="/">All Posts</option>
-                {{range .Categories}}
-                <option value="/category/{{.ID}}" {{if eq $.CurrentCategory.ID .ID}}selected{{end}}>
-                    {{.Name}}
-                </option>
+    <div class="layout">
+        <aside class="sidebar">
+            <nav class="nav-menu">
+                <div class="logo">
+                    🌊 Forum
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <a href="/" class="nav-link active">🏠 Home</a>
+                        {{if .User}}
+                            <a href="/posts/created" class="nav-link">📝 My Posts</a>
+                            <a href="/posts/liked" class="nav-link">❤️ Liked Posts</a>
+                    <a href="/signin" class="nav-link">👤 Sign In</a>
                 {{end}}
-            </select>
-            
-            {{if .User}}
-            <a href="/posts/created" class="filter-btn">My Posts</a>
-            <a href="/posts/liked" class="filter-btn">Liked Posts</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="filters">
+                <h3>Filter by:</h3>
+                <select onchange="window.location.href=this.value">
+                    <option value="/">All Posts</option>
+                    {{range .Categories}}
+                    <option value="/category/{{.ID}}" {{if eq $.CurrentCategory.ID .ID}}selected{{end}}>
+                        {{.Name}}
+                    </option>
+                    {{end}}
+                </select>
+            </div>
+
+            {{range .Posts}}
+            <div class="post-card">
+                <h2><a href="/post/{{.ID}}">{{.Title}}</a></h2>
+                <p class="post-meta">
+                    Posted by {{.Username}} on {{.CreatedAt.Format "Jan 02, 2006"}}
+                </p>
+                <div class="categories">
+                    {{range .Categories}}
+                    <span class="category-tag">{{.Name}}</span>
+                    {{end}}
+                </div>
+                <div class="post-stats">
+                    <span>❤️ {{.Likes}} likes</span>
+                    <span>👎 {{.Dislikes}} dislikes</span>
+                    <span>💬 {{.CommentCount}} comments</span>
+                </div>
+            </div>
+            {{else}}
+            <div class="post-card">
+                <p>No posts found.</p>
+            </div>
             {{end}}
-        </div>
-    
-        {{range .Posts}}
-        <div class="post-card">
-            <h2><a href="/post/{{.ID}}">{{.Title}}</a></h2>
-            <p class="post-meta">
-                Posted by {{.Username}} on {{.CreatedAt.Format "Jan 02, 2006"}}
-            </p>
-            <div class="categories">
-                {{range .Categories}}
-                <span class="category-tag">{{.Name}}</span>
-                {{end}}
+        </main>
+
+        <aside class="trending">
+            <h2>Popular Categories</h2>
+            {{range .Categories}}
+            <div class="trend-item">
+                <h4>{{.Name}}</h4>
+                <span>{{.PostCount}} posts</span>
             </div>
-            <div class="post-stats">
-                <span>{{.Likes}} likes</span>
-                <span>{{.Dislikes}} dislikes</span>
-                <span>{{.CommentCount}} comments</span>
-            </div>
-        </div>
-        {{else}}
-        <p>No posts found.</p>
-        {{end}}
+            {{end}}
+        </aside>
     </div>
 </body>
 </html>
