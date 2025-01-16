@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,7 @@
             --text-light: #f1f5f9;
             --text-muted: #94a3b8;
             --card-bg: #273548;
-            --shadow: 0 4px 15px rgba(0,0,0,0.2);
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             --transition: all 0.3s ease;
         }
 
@@ -28,8 +29,85 @@
             background: var(--primary-bg);
             color: var(--text-light);
             line-height: 1.6;
+            padding-top: 4rem;
         }
 
+        /* Top Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--container-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-light);
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        /* Update for dropdown styles */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 2rem;
+            background: var(--container-bg);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+        }
+
+        /* Show dropdown when hovering over user avatar or dropdown */
+        .user-avatar:hover+.dropdown-menu,
+        .dropdown-menu:hover {
+            visibility: visible;
+            opacity: 1;
+        }
+
+
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--card-bg);
+        }
+
+        /* Layout and Content Styles */
         .layout {
             display: grid;
             grid-template-columns: 250px 1fr 300px;
@@ -41,8 +119,8 @@
 
         .sidebar {
             position: sticky;
-            top: 2rem;
-            height: calc(100vh - 4rem);
+            top: 5rem;
+            height: calc(100vh - 7rem);
         }
 
         .nav-menu {
@@ -84,118 +162,164 @@
             color: var(--primary-bg);
         }
 
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .filters {
-            background: var(--container-bg);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .filters select {
-            background: var(--card-bg);
-            color: var(--text-light);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-
-        .filter-btn {
-            background: var(--card-bg);
-            color: var(--text-light);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: var(--transition);
-        }
-
-        .filter-btn:hover {
-            background: var(--accent-color);
-            color: var(--primary-bg);
-        }
-
+        /* Post Card Styles */
         .post-card {
             background: var(--container-bg);
             border-radius: 1rem;
             padding: 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease forwards;
-            margin-bottom: 1.5rem;
         }
 
-        .post-card h2 {
-            margin-bottom: 0.5rem;
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .post-card h2 a {
-            color: var(--text-light);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .post-card h2 a:hover {
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--accent-color);
+            font-weight: 600;
         }
 
         .post-meta {
             color: var(--text-muted);
             font-size: 0.9rem;
-            margin-bottom: 1rem;
+        }
+
+        .post-meta h3 {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
         }
 
         .categories {
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
         }
 
         .category-tag {
-            background: var(--card-bg);
-            color: var(--text-light);
+            background: var(--accent-color);
+            color: var(--primary-bg);
             padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.9rem;
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .post-stats {
+        /* Post Footer Button Styling */
+        .post-footer {
             display: flex;
-            gap: 1.5rem;
-            color: var(--text-muted);
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
+        .action-btn {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            /* Align text center */
+        }
+
+        .action-btn:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        .action-btn:focus {
+            outline: none;
+            /* Remove the default focus outline */
+        }
+
+
+        .action-btn {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        /* Trending Sidebar Styles */
         .trending {
             background: var(--container-bg);
             border-radius: 1rem;
             padding: 1.5rem;
             position: sticky;
-            top: 2rem;
+            top: 5rem;
             box-shadow: var(--shadow);
         }
 
-        .trending h2 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
+        .trend-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--card-bg);
+        }
+
+        .trend-item:last-child {
+            border: none;
+        }
+
+        .trend-item h4 {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .trend-item span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 1200px) {
             .layout {
                 grid-template-columns: 250px 1fr;
             }
+
             .trending {
                 display: none;
             }
@@ -206,12 +330,14 @@
                 grid-template-columns: 1fr;
                 padding: 1rem;
             }
+
             .sidebar {
                 display: none;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="layout">
         <aside class="sidebar">
@@ -222,58 +348,73 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <a href="/" class="nav-link active">🏠 Home</a>
-                            <a href="/signin" class="nav-link">📝 My Posts</a>
-                            <a href="/posts/liked" class="nav-link">❤️ Liked Posts</a>
-                    <a href="/signin" class="nav-link">👤 Sign In</a>
+                        <a href="/signin" class="nav-link">📝 My Posts</a>
+                        <a href="/posts/liked" class="nav-link">❤️ Liked Posts</a>
+                        <a href="/signin" class="nav-link">👤 Sign In</a>
             </nav>
         </aside>
 
         <main class="main-content">
-            <div class="filters">
-                <h3>Filter by:</h3>
-                <select onchange="window.location.href=this.value">
-                    <option value="/">All Posts</option>
-                    {{range .Categories}}
-                    <option value="/category/{{.ID}}" {{if eq $.CurrentCategory.ID .ID}}selected{{end}}>
-                        {{.Name}}
-                    </option>
-                    {{end}}
-                </select>
-            </div>
-
+            {{if .Posts}}
             {{range .Posts}}
             <div class="post-card">
-                <h2><a href="/post/{{.ID}}">{{.Title}}</a></h2>
-                <p class="post-meta">
-                    Posted by {{.Username}} on {{.CreatedAt.Format "Jan 02, 2006"}}
-                </p>
+                <div class="post-header">
+                    <div class="avatar">
+                        {{slice .Username 0 2}}
+                    </div>
+                    <div class="post-meta">
+                        <h3>{{.Username}}</h3>
+                        <span>Posted on {{.PostTime.Format "Jan 02, 2006 • 3:04 PM"}}</span>
+                    </div>
+                </div>
+                <h2><a href="/post/{{.ID}}" style="color: var(--text-light); text-decoration: none;">{{.Title}}</a></h2>
+                {{if .Categories}}
                 <div class="categories">
                     {{range .Categories}}
                     <span class="category-tag">{{.Name}}</span>
                     {{end}}
                 </div>
-                <div class="post-stats">
-                    <span>❤️ {{.Likes}} likes</span>
-                    <span>👎 {{.Dislikes}} dislikes</span>
-                    <span>💬 {{.CommentCount}} comments</span>
+                {{end}}
+                <div class="post-footer">
+                    <a href="/signin">
+                        <button class="action-btn">
+                            ❤️ <span>{{.Likes}}</span>
+                        </button>
+                    </a>
+                    <a href="/signin">
+                        <button class="action-btn">
+                            👎 <span>{{.Dislikes}}</span>
+                        </button>
+                    </a>
+                    <a href="/signin">
+                        <button class="action-btn">
+                            💬 <span>{{.CommentCount}}</span>
+                        </button>
+                    </a>
                 </div>
             </div>
+            {{end}}
             {{else}}
             <div class="post-card">
-                <p>No posts found.</p>
+                <p>No posts to display.</p>
             </div>
             {{end}}
         </main>
 
         <aside class="trending">
             <h2>Popular Categories</h2>
+            {{if .Categories}}
             {{range .Categories}}
             <div class="trend-item">
                 <h4>{{.Name}}</h4>
                 <span>{{.PostCount}} posts</span>
             </div>
             {{end}}
+            {{else}}
+            <p>No categories to display.</p>
+            {{end}}
         </aside>
     </div>
 </body>
+
 </html>

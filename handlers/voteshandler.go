@@ -1,7 +1,9 @@
+// handlers/voteshandler.go
 package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"forum/utils"
 	"net/http"
 	"strconv"
@@ -27,11 +29,12 @@ func VotePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Server error", http.StatusInternalServerError)
 		return
 	}
+	defer tx.Rollback()
 
 	// Check if user already voted
 	var existingVote int
 	err = tx.QueryRow(`
-        SELECT vote FROM post_votes
+        SELECT vote FROM post_votes 
         WHERE user_id = ? AND post_id = ?
     `, session.UserID, postID).Scan(&existingVote)
 
@@ -51,7 +54,6 @@ func VotePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		tx.Rollback()
 		http.Error(w, "Error processing vote", http.StatusInternalServerError)
 		return
 	}
@@ -65,11 +67,31 @@ func VotePostHandler(w http.ResponseWriter, r *http.Request) {
     `, postID, postID, postID)
 
 	if err != nil {
-		tx.Rollback()
 		http.Error(w, "Error updating vote counts", http.StatusInternalServerError)
 		return
 	}
 
-	tx.Commit()
-	w.WriteHeader(http.StatusOK)
+	// Get updated counts
+	var likes, dislikes int
+	err = tx.QueryRow(`
+        SELECT likes, dislikes FROM posts WHERE id = ?
+    `, postID).Scan(&likes, &dislikes)
+
+	if err != nil {
+		http.Error(w, "Error getting updated counts", http.StatusInternalServerError)
+		return
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		http.Error(w, "Error committing transaction", http.StatusInternalServerError)
+		return
+	}
+
+	// Return JSON response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"likes":    likes,
+		"dislikes": dislikes,
+	})
 }

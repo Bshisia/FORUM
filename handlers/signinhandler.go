@@ -100,22 +100,22 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// func SignOutHandler(w http.ResponseWriter, r *http.Request) {
-// 	// Clear the session from database if needed
-// 	if cookie, err := r.Cookie("session_token"); err == nil {
-// 		utils.DeleteSession(db, cookie.Value)
-// 	}
+func SignOutHandler(w http.ResponseWriter, r *http.Request) {
+	// Clear the session from database if needed
+	if cookie, err := r.Cookie("session_token"); err == nil {
+		utils.DeleteSession(db, cookie.Value)
+	}
 
-// 	// Clear the cookie
-// 	http.SetCookie(w, &http.Cookie{
-// 		Name:     "session_token",
-// 		Value:    "",
-// 		Path:     "/",
-// 		Expires:  time.Now().Add(-time.Hour),
-// 		HttpOnly: true,
-// 		Secure:   true, // Enable for HTTPS
-// 		SameSite: http.SameSiteStrictMode,
-// 	})
+	// Clear the cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		Path:     "/",
+		Expires:  time.Now().Add(-time.Hour),
+		HttpOnly: true,
+		Secure:   true, // Enable for HTTPS
+		SameSite: http.SameSiteStrictMode,
+	})
 
-// 	http.Redirect(w, r, "/", http.StatusSeeOther)
-// }
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

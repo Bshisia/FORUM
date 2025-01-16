@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,7 @@
             --text-light: #f1f5f9;
             --text-muted: #94a3b8;
             --card-bg: #273548;
-            --shadow: 0 4px 15px rgba(0,0,0,0.2);
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             --transition: all 0.3s ease;
         }
 
@@ -74,18 +75,23 @@
         .dropdown-menu {
             position: absolute;
             top: 100%;
-            right: 2rem;
+            right: 0;
             background: var(--container-bg);
             border-radius: 0.5rem;
             padding: 0.5rem;
             box-shadow: var(--shadow);
-            display: none;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+            min-width: 150px;
         }
 
-        .user-avatar:hover + .dropdown-menu,
+        .user-avatar:hover+.dropdown-menu,
         .dropdown-menu:hover {
-            display: block;
+            visibility: visible;
+            opacity: 1;
         }
+
 
         .dropdown-item {
             display: block;
@@ -94,6 +100,19 @@
             text-decoration: none;
             border-radius: 0.25rem;
             transition: var(--transition);
+        }
+
+        .dropdown-item button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .dropdown-item button:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
         }
 
         .dropdown-item:hover {
@@ -230,6 +249,21 @@
             transition: var(--transition);
         }
 
+        .vote-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vote-btn.voted {
+            background: var(--accent-color) !important;
+            color: var(--primary-bg) !important;
+            transform: scale(1.1);
+        }
+
+        .vote-btn:active {
+            transform: scale(0.95);
+        }
+
         .action-btn:hover {
             background: var(--accent-color);
             color: var(--primary-bg);
@@ -267,14 +301,22 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 1200px) {
             .layout {
                 grid-template-columns: 250px 1fr;
             }
+
             .trending {
                 display: none;
             }
@@ -285,12 +327,14 @@
                 grid-template-columns: 1fr;
                 padding: 1rem;
             }
+
             .sidebar {
                 display: none;
             }
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="logo">
@@ -298,17 +342,26 @@
         </div>
         <div class="user-profile">
             {{if .User}}
-                <span>Welcome, {{.User.UserName}}</span>
+            <span>Welcome, {{.User.UserName}}</span>
             {{else}}
-                <span>Welcome, Guest</span>
+            <span>Welcome, Guest</span>
             {{end}}
             <div class="user-avatar">
                 👤
             </div>
             <div class="dropdown-menu">
+                {{if .User}}
                 <a href="/profile" class="dropdown-item">My Profile</a>
                 <a href="/settings" class="dropdown-item">Settings</a>
-                <a href="/logout" class="dropdown-item">Sign Out</a>
+                <form action="/signout" method="POST" style="margin: 0;">
+                    <button type="submit" class="dropdown-item"
+                        style="width: 100%; border: none; cursor: pointer; text-align: left; background: none; padding: 0.5rem 1rem;">
+                        Sign Out
+                    </button>
+                </form>
+                {{else}}
+                <a href="/signin" class="dropdown-item">Sign In</a>
+                {{end}}
             </div>
         </div>
     </nav>
@@ -316,16 +369,22 @@
     <div class="layout">
         <aside class="sidebar">
             <nav class="nav-menu">
+                {{if .User}}
                 <a href="/timeline" class="nav-link active">🏠 Home</a>
                 <a href="/posts/created" class="nav-link">📝 My Posts</a>
                 <a href="/posts/liked" class="nav-link">❤️ Liked Posts</a>
                 <a href="/post/create" class="nav-link">✍️ Create Post</a>
+                {{else}}
+                <a href="/" class="nav-link active">🏠 Home</a>
+                <a href="/signin" class="nav-link">👤 Sign In</a>
+                {{end}}
             </nav>
         </aside>
 
         <main class="main-content">
             {{if .Posts}}
-                {{range .Posts}}
+            {{range .Posts}}
+            <a href="/post/{{.ID}}" class="post-card-link" style="text-decoration: none; color: inherit;">
                 <div class="post-card">
                     <div class="post-header">
                         <div class="avatar">
@@ -336,7 +395,8 @@
                             <span>Posted on {{.PostTime.Format "Jan 02, 2006 • 3:04 PM"}}</span>
                         </div>
                     </div>
-                    <h2><a href="/post/{{.ID}}" style="color: var(--text-light); text-decoration: none;">{{.Title}}</a></h2>
+                    <h2>{{.Title}}</h2>
+                    <p>{{.Content}}</p>
                     {{if .Categories}}
                     <div class="categories">
                         {{range .Categories}}
@@ -345,50 +405,108 @@
                     </div>
                     {{end}}
                     <div class="post-footer">
-                        <button class="action-btn">
-                            ❤️ <span>{{.Likes}}</span>
+                        <button class="action-btn vote-btn" data-post-id="{{.ID}}" data-vote-type="1">
+                            ❤️ <span class="vote-count">{{.Likes}}</span>
                         </button>
-                        <button class="action-btn">
-                            👎 <span>{{.Dislikes}}</span>
+                        <button class="action-btn vote-btn" data-post-id="{{.ID}}" data-vote-type="-1">
+                            👎 <span class="vote-count">{{.Dislikes}}</span>
                         </button>
                         <button class="action-btn">
                             💬 <span>{{.CommentCount}}</span>
                         </button>
                     </div>
                 </div>
-                {{end}}
+            </a>
+            {{end}}
             {{else}}
-                <div class="post-card">
-                    <p>No posts to display.</p>
-                </div>
+            <div class="post-card">
+                <p>No posts to display.</p>
+            </div>
             {{end}}
         </main>
+
+
 
         <aside class="trending">
             <h2>Popular Categories</h2>
             {{if .Categories}}
-                {{range .Categories}}
-                <div class="trend-item">
-                    <h4>{{.Name}}</h4>
-                    <span>{{.PostCount}} posts</span>
-                </div>
-                {{end}}
+            {{range .Categories}}
+            <div class="trend-item">
+                <h4>{{.Name}}</h4>
+                <span>{{.PostCount}} posts</span>
+            </div>
+            {{end}}
             {{else}}
-                <p>No categories to display.</p>
+            <p>No categories to display.</p>
             {{end}}
         </aside>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Add interaction to action buttons
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.style.transform = 'scale(1.1)';
-                setTimeout(() => this.style.transform = 'scale(1)', 200);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add interaction to action buttons
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    this.style.transform = 'scale(1.1)';
+                    setTimeout(() => this.style.transform = 'scale(1)', 200);
+                });
             });
         });
-    });
+        document.querySelectorAll('.vote-btn').forEach(button => {
+            button.addEventListener('click', async function (e) {
+                e.preventDefault();
+
+                const postId = this.dataset.postId;
+                const voteType = this.dataset.voteType;
+                const countSpan = this.querySelector('.vote-count');
+
+                try {
+                    // Check if the user has already voted on this post
+                    const currentVote = this.classList.contains('voted') ? this.dataset.voteType : null;
+
+                    // If the user has already voted the same type, do nothing
+                    if (currentVote === voteType) return;
+
+                    // If switching votes (from like to dislike or vice versa)
+                    const oppositeVoteType = voteType === '1' ? '-1' : '1';
+                    const oppositeButton = document.querySelector(`.vote-btn[data-post-id="${postId}"][data-vote-type="${oppositeVoteType}"]`);
+
+                    if (oppositeButton && oppositeButton.classList.contains('voted')) {
+                        // Un-vote the opposite button if it was previously voted on
+                        oppositeButton.classList.remove('voted');
+                        const oppositeCountSpan = oppositeButton.querySelector('.vote-count');
+                        oppositeCountSpan.textContent = parseInt(oppositeCountSpan.textContent) - 1;
+                    }
+
+                    // Perform the vote action (like or dislike)
+                    const response = await fetch('/post/vote', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `post_id=${postId}&vote=${voteType}`
+                    });
+
+                    if (response.ok) {
+                        // Update the count for the selected vote button
+                        const data = await response.json();
+                        const currentCountSpan = this.querySelector('.vote-count');
+                        currentCountSpan.textContent = voteType === '1' ? data.likes : data.dislikes;
+
+                        // Add visual feedback and mark this button as voted
+                        this.classList.add('voted');
+                        setTimeout(() => this.classList.remove('voted'), 300);
+                    } else {
+                        throw new Error('Vote failed');
+                    }
+                } catch (error) {
+                    console.error('Error voting:', error);
+                    alert('Failed to vote. Please try again.');
+                }
+            });
+        });
+
     </script>
 </body>
+
 </html>

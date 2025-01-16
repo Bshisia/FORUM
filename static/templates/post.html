@@ -1,60 +1,678 @@
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Post.Title}}</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --container-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --hover-accent: #7dd3fc;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-bg: #273548;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding-top: 4rem;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--container-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--container-bg);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+            min-width: 150px;
+        }
+
+        .user-avatar:hover+.dropdown-menu,
+        .dropdown-menu:hover {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--card-bg);
+        }
+
+        /* Layout Styles */
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Profile Page Styles */
+        .profile-header {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-cover {
+            height: 200px;
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            margin: -2rem -2rem 0;
+            position: relative;
+        }
+
+        .profile-avatar-large {
+            width: 150px;
+            height: 150px;
+            background: var(--card-bg);
+            border: 4px solid var(--container-bg);
+            border-radius: 50%;
+            position: relative;
+            margin-top: -75px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .profile-info {
+            margin-top: 1rem;
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-username {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-bio {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .profile-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .primary-btn {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .primary-btn:hover {
+            background: var(--hover-accent);
+        }
+
+        .secondary-btn {
+            background: var(--card-bg);
+            color: var(--text-light);
+        }
+
+        .secondary-btn:hover {
+            background: var(--container-bg);
+        }
+
+        .profile-nav {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-nav-item {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .profile-nav-item.active {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .profile-nav-item:hover:not(.active) {
+            background: var(--card-bg);
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .profile-post {
+            background: var(--container-bg);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .profile-post:hover {
+            transform: translateY(-5px);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-timestamp {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .post-container {
+            background: var(--container-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            max-width: 900px;
+            margin: 2rem auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--hover-accent));
+        }
+
+        .post-container h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .post-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-tag {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            padding: 0.35rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .category-tag:hover {
+            background: var(--hover-accent);
+            transform: translateY(-2px);
+        }
+
+        .post-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .vote-buttons form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .vote-button {
+            background: var(--card-bg);
+            border: none;
+            color: var(--text-light);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .vote-button:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        .vote-button .count {
+            font-weight: 600;
+        }
+
+        .comments-section {
+            margin-top: 3rem;
+        }
+
+        .comments-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .comment-form {
+            margin-bottom: 2.5rem;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            height: 6rem;
+            border-radius: 1rem;
+            border: 2px solid var(--card-bg);
+            padding: 1rem;
+            background: var(--card-bg);
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            resize: vertical;
+        }
+
+        .comment-form textarea:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        .comment-form button {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .comment-form button:hover {
+            background: var(--hover-accent);
+            transform: translateY(-2px);
+        }
+
+        .comment {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--container-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .comment-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .comment-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .comment-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .comment .vote-buttons form {
+            margin-bottom: 0;
+        }
+
+        .comment .vote-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .post-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .post-container h1 {
+                font-size: 1.8rem;
+            }
+
+            .vote-buttons form {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="post-container">
-        <h1>{{.Post.Title}}</h1>
-        <div class="post-meta">
-            Posted by {{.Post.Username}} on {{.Post.CreatedAt.Format "Jan 02, 2006"}}
+    <nav class="navbar">
+        <a href="/" class="logo">🌊 Forum</a>
+        <div class="user-profile">
+            <div class="user-avatar">👤</div>
+            <div class="dropdown-menu">
+                <a href="/profile" class="dropdown-item">Profile</a>
+                <a href="/settings" class="dropdown-item">Settings</a>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
         </div>
+    </nav>
+
+    <div class="post-container">
+
+        <div class="post-meta">
+            <div class="post-author">
+                <div class="author-avatar">
+                    {{slice .Post.Username 0 2}}
+                </div>
+                <div class="author-info">
+                    <span class="author-name">{{.Post.Username}}</span>
+                    <span class="post-date">{{.Post.PostTime.Format "Jan 02, 2006"}}</span>
+                </div>
+            </div>
+        </div>
+
         <div class="categories">
             {{range .Post.Categories}}
             <span class="category-tag">{{.Name}}</span>
             {{end}}
         </div>
+        <h1>{{.Post.Title}}</h1>
+
+
         <div class="post-content">
             {{.Post.Content}}
         </div>
+
         <div class="vote-buttons">
             <form method="POST" action="/post/vote">
                 <input type="hidden" name="post_id" value="{{.Post.ID}}">
-                <button type="submit" name="vote" value="1">👍 {{.Post.Likes}}</button>
-                <button type="submit" name="vote" value="-1">👎 {{.Post.Dislikes}}</button>
+                <button type="submit" name="vote" value="1" class="vote-button">
+                    👍 <span class="count">{{.Post.Likes}}</span>
+                </button>
+                <button type="submit" name="vote" value="-1" class="vote-button">
+                    👎 <span class="count">{{.Post.Dislikes}}</span>
+                </button>
             </form>
         </div>
-        
+
         <div class="comments-section">
-            <h2>Comments</h2>
+            <h2>💬 Comments</h2>
+
             {{if .User}}
-            <form method="POST" action="/post/{{.Post.ID}}/comment">
-                <textarea name="content" required></textarea>
-                <button type="submit">Add Comment</button>
+            <form class="comment-form" method="POST" action="/post/{{.Post.ID}}/comment">
+                <textarea name="content" placeholder="Share your thoughts..." required></textarea>
+                <button type="submit">Post Comment</button>
             </form>
+            {{else}}
+            <div class="comment-form">
+                <a href="/signin" class="profile-btn primary-btn">Sign in to comment</a>
+            </div>
             {{end}}
-            
+
             {{range .Comments}}
             <div class="comment">
-                <div class="comment-meta">
-                    {{.Username}} on {{.CommentTime.Format "Jan 02, 2006"}}
+                <div class="comment-header">
+                    <div class="comment-avatar">
+                        {{slice .Username 0 2}}
+                    </div>
+                    <div class="comment-meta">
+                        <span class="comment-author">{{.Username}}</span>
+                        <span class="comment-date">{{.CommentTime.Format "Jan 02, 2006"}}</span>
+                    </div>
                 </div>
+
                 <div class="comment-content">
                     {{.Content}}
                 </div>
+
                 <div class="vote-buttons">
                     <form method="POST" action="/comment/vote">
                         <input type="hidden" name="comment_id" value="{{.ID}}">
-                        <button type="submit" name="vote" value="1">👍 {{.Likes}}</button>
-                        <button type="submit" name="vote" value="-1">👎 {{.Dislikes}}</button>
+                        <button type="submit" name="vote" value="1" class="vote-button">
+                            👍 <span class="count">{{.Likes}}</span>
+                        </button>
+                        <button type="submit" name="vote" value="-1" class="vote-button">
+                            👎 <span class="count">{{.Dislikes}}</span>
+                        </button>
                     </form>
                 </div>
             </div>
             {{end}}
         </div>
     </div>
+
+    <script>
+        // Add smooth scrolling to comments
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Auto-expand textarea as user types
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        }
+    </script>
 </body>
+
 </html>
