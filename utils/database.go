@@ -3,10 +3,14 @@ package utils
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
+
+var db *sql.DB
 
 func InitialiseDB() *sql.DB {
 	db, err := sql.Open("sqlite3", "./forum.db")
@@ -93,11 +97,36 @@ func InitialiseDB() *sql.DB {
         FOREIGN KEY (user_id) REFERENCES users(id),
         FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
     );`
-
 	_, err = db.Exec(createTables)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+    err = InsertDefaultCategories(db)
+	if err != nil {
+		fmt.Println("error")
+		os.Exit(0)
+	}
 	return db
+}
+
+func InsertDefaultCategories(db *sql.DB) error {
+	categories := []string{
+		"Tech",
+		"Programming",
+		"Business",
+		"Lifestyle",
+		"Personal Development",
+		"Football",
+		"Politics",
+		"General News",
+	}
+
+	for _, category := range categories {
+		_, err := db.Exec("INSERT OR IGNORE INTO categories (name) VALUES (?)", category)
+		if err != nil {
+			return fmt.Errorf("failed to insert category %s: %v", category, err)
+		}
+	}
+	return nil
 }

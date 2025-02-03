@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"forum/handlers"
 	"net/http"
+
+	"forum/handlers"
 )
 
 // setupRoutes handles the route registration
@@ -22,4 +23,6 @@ func SetupRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/post/vote", handlers.VotePostHandler)
 	mux.HandleFunc("/comment/vote", handlers.VoteCommentHandler)
 	mux.HandleFunc("/post/comment", handlers.CreateCommentHandler)
+	mux.HandleFunc("/categories", handlers.CategoriesHandler)
+	mux.HandleFunc("/posts/category", handlers.FilterPostsByCategoryHandler) // New route
 }

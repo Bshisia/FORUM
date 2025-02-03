@@ -26,7 +26,7 @@
 
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--primary-bg);
+            background-image: url('/static/img/back.jpeg');
             color: var(--text-light);
             line-height: 1.6;
             padding-top: 4rem;
@@ -112,7 +112,7 @@
 
         .dropdown-item button:hover {
             background: var(--accent-color);
-            color: var(--primary-bg);
+            color: var (--primary-bg);
         }
 
         .dropdown-item:hover {
@@ -377,7 +377,18 @@
                 {{else}}
                 <a href="/" class="nav-link active">🏠 Home</a>
                 <a href="/signin" class="nav-link">👤 Sign In</a>
+                
                 {{end}}
+                <div class="categories-dropdown">
+                    <label for="categories">Category:</label>
+                    <select id="categories">
+                        <option value="">Select a category</option>
+                        {{range .Categories}}
+                        <option value="{{.Name}}">{{.Name}}</option>
+                        {{end}}
+                    </select>
+                    <button id="applyFilterBtn" onclick="applyCategoryFilter()">Apply Filter</button>
+                </div>
             </nav>
         </aside>
 
@@ -506,6 +517,38 @@
             });
         });
 
+        // Fetch categories from the server and populate the dropdown
+        async function fetchCategories() {
+            const response = await fetch('/categories');
+            const categories = await response.json();
+            const categoriesDropdown = document.getElementById('categories');
+
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoriesDropdown.appendChild(option);
+            });
+        }
+
+        // Filter posts by selected category
+        function filterByCategory() {
+            const selectedCategory = document.getElementById('categories').value;
+            if (selectedCategory) {
+                window.location.href = `/posts/category?category=${selectedCategory}`;
+            }
+        }
+
+        // Call fetchCategories on page load
+        document.addEventListener('DOMContentLoaded', fetchCategories);
+
+        // Apply the selected category filter
+        function applyCategoryFilter() {
+            const selectedCategory = document.getElementById('categories').value;
+            if (selectedCategory) {
+                window.location.href = `/posts/category?category=${selectedCategory}`;
+            }
+        }
     </script>
 </body>
 

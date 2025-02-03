@@ -3,12 +3,21 @@ package middleware
 import (
 	"context"
 	"database/sql"
-	"forum/utils"
+	"log"
 	"net/http"
 	"time"
+
+	"forum/utils"
 )
 
-func oooAuthMiddleware(db *sql.DB) func(http.Handler) http.Handler {
+func LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func AuthMiddleware(db *sql.DB) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cookie, err := r.Cookie("session_token")
